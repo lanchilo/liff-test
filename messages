@@ -1,1 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIFF Test Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #00b900;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #009900;
+    }
+  </style>
+</head>
+<body>
+  <h1>LIFF Test Page</h1>
+  <p>Click the button or close the window to send a message.</p>
+  <button id="sendMessage">Send Test Message</button>
+  <button onclick="liff.closeWindow()">Close Window</button>
 
+  <script src="https://static.line-scdn.net/liff/edge/2.23.2/sdk.js"></script>
+  <script>
+    async function initializeLiff() {
+      try {
+        // Use provided LIFF ID
+        await liff.init({ liffId: '1657437908-3PJlM2O0' });
+        console.log('LIFF initialized successfully');
+
+        // Add event listener for manual message sending
+        document.getElementById('sendMessage').addEventListener('click', sendMessage);
+
+        // Detect window close
+        window.addEventListener('beforeunload', async (event) => {
+          await sendMessage();
+        });
+      } catch (err) {
+        console.error('LIFF initialization failed:', err);
+        alert(`Error: ${JSON.stringify(err)}`);
+      }
+    }
+
+    async function sendMessage() {
+      try {
+        await liff.sendMessages([
+          {
+            type: 'text',
+            text: 'This is an auto-sent message from LIFF!',
+          }
+        ]);
+        console.log('Message sent successfully');
+      } catch (err) {
+        console.error('Error sending message:', err);
+        alert(`Error sending message: ${err}`);
+      }
+    }
+
+    // Initialize LIFF when the page loads
+    document.addEventListener('DOMContentLoaded', initializeLiff);
+  </script>
+</body>
+</html>
